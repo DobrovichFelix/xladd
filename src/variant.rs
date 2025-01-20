@@ -62,7 +62,9 @@ impl Variant {
     pub fn missing() -> Variant {
         Variant(XLOPER12 {
             xltype: xltypeMissing,
-            val: xloper12__bindgen_ty_1 { w: 0 },
+            val: xloper12__bindgen_ty_1 { w: 0 }
+            
+            ,
         })
     }
 
@@ -74,6 +76,10 @@ impl Variant {
     /// that are shown as #DIV0 etc. Currently supported error codes are:
     /// xlerrNull, xlerrDiv0, xlerrValue, xlerrRef, xlerrName, xlerrNum, xlerrNA, xlerrGettingData
     pub fn from_err(xlerr: u32) -> Variant {
+
+        if xlerr == xltypeMissing || xlerr == xltypeNil {
+            return Variant::from("1"); 
+        }
         Variant(XLOPER12 {
             xltype: xltypeErr,
             val: xloper12__bindgen_ty_1 { err: xlerr as i32 },
