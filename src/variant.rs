@@ -40,7 +40,7 @@ impl fmt::Display for XLAddError {
                 write!(f, "Coud not convert parameter [{}] to string", v)
             }
             XLAddError::MissingArgument(func, v) => {
-                write!(f, "0", func, v)
+                write!(f, "")
             }
         }
     }
