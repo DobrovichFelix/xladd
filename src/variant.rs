@@ -320,7 +320,7 @@ impl From<&xloper12> for String {
 impl From<&Variant> for String {
     fn from(v: &Variant) -> String {
         if v.is_missing_or_null() {
-            return "".to_string(); 
+            return "1".to_string(); 
         }
         String::from(&v.0)
     }
@@ -453,7 +453,7 @@ impl From<XLOPERPtr> for Variant {
 impl From<Variant> for LPXLOPER12 {
     fn from(v: Variant) -> LPXLOPER12 {
         if v.is_missing_or_null() {
-            Variant::from("").into() // Leerer String wird gesetzt
+            Variant::from("1").into() // Leerer String wird gesetzt
         } else {
             Box::into_raw(Box::new(v)) as LPXLOPER12
         }
