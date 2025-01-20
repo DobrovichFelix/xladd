@@ -20,7 +20,7 @@ pub enum XLAddError {
     BoolConversionFailed(String),
     IntConversionFailed(String),
     StringConversionFailed(String),
-    MissingArgument(String, String),
+    //MissingArgument(String, String),
 }
 
 impl std::error::Error for XLAddError {}
@@ -39,9 +39,10 @@ impl fmt::Display for XLAddError {
             XLAddError::StringConversionFailed(v) => {
                 write!(f, "Coud not convert parameter [{}] to string", v)
             }
-            XLAddError::MissingArgument(func, v) => {
+            /*XLAddError::MissingArgument(func, v) => {
                 write!(f, "Function [{}] is missing parameter {} ", func, v)
             }
+            */
         }
     }
 }
@@ -380,10 +381,9 @@ impl<'a> From<&'a Variant> for Vec<f64> {
         let (x, y) = v.dim();
         let mut res = Vec::with_capacity(x * y);
         if x == 1 && y == 1 {
-            let value = f64::from(v);
-            res.push(if value.is_nan() { 1.0 } else { value });
+            res.push(f64::from(v))
         } else {
-            res.resize(x * y, 1.0);
+            res.resize(x * y, 0.0);
             let slice = unsafe { slice::from_raw_parts::<xloper12>(v.0.val.array.lparray, x * y) };
             for j in 0..y {
                 for i in 0..x {
@@ -1121,7 +1121,7 @@ mod tests {
     use super::*;
     #[cfg(feature = "use_ndarray")]
     use ndarray::Array2;
-    #[cfg(feature = "use_ndarray")]
+    #[cfg(feature = "use_ndarray")] 
     #[test]
     fn ndarray_conv() {
         let arr = Array2::from_shape_vec([2, 2], vec![1.0, 2.0, 3.0, 4.0]).unwrap();
