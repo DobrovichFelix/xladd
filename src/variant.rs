@@ -319,6 +319,9 @@ impl From<&xloper12> for String {
 
 impl From<&Variant> for String {
     fn from(v: &Variant) -> String {
+        if v.is_missing_or_null() {
+            return "".to_string(); 
+        }
         String::from(&v.0)
     }
 }
