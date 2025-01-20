@@ -20,7 +20,6 @@ pub enum XLAddError {
     BoolConversionFailed(String),
     IntConversionFailed(String),
     StringConversionFailed(String),
-    MissingArgument(String, String),
 }
 
 impl std::error::Error for XLAddError {}
@@ -38,9 +37,6 @@ impl fmt::Display for XLAddError {
             }
             XLAddError::StringConversionFailed(v) => {
                 write!(f, "Coud not convert parameter [{}] to string", v)
-            }
-            XLAddError::MissingArgument(func, v) => {
-                write!(f, "")
             }
         }
     }
@@ -453,7 +449,7 @@ impl From<XLOPERPtr> for Variant {
 impl From<Variant> for LPXLOPER12 {
     fn from(v: Variant) -> LPXLOPER12 {
         if v.is_missing_or_null() {
-            Variant::from("").into() // Leerer String wird gesetzt
+            Variant::from("").into()
         } else {
             Box::into_raw(Box::new(v)) as LPXLOPER12
         }
