@@ -20,7 +20,7 @@ pub enum XLAddError {
     BoolConversionFailed(String),
     IntConversionFailed(String),
     StringConversionFailed(String),
-    //MissingArgument(String, String),
+    MissingArgument(String, String),
 }
 
 impl std::error::Error for XLAddError {}
@@ -39,10 +39,9 @@ impl fmt::Display for XLAddError {
             XLAddError::StringConversionFailed(v) => {
                 write!(f, "Coud not convert parameter [{}] to string", v)
             }
-            /*XLAddError::MissingArgument(func, v) => {
-                write!(f, "Function [{}] is missing parameter {} ", func, v)
+            XLAddError::MissingArgument(func, v) => {
+                write!(f, "0", func, v)
             }
-            */
         }
     }
 }
@@ -62,9 +61,7 @@ impl Variant {
     pub fn missing() -> Variant {
         Variant(XLOPER12 {
             xltype: xltypeMissing,
-            val: xloper12__bindgen_ty_1 { w: 0 }
-            
-            ,
+            val: xloper12__bindgen_ty_1 { w: 0 },
         })
     }
 
@@ -76,10 +73,6 @@ impl Variant {
     /// that are shown as #DIV0 etc. Currently supported error codes are:
     /// xlerrNull, xlerrDiv0, xlerrValue, xlerrRef, xlerrName, xlerrNum, xlerrNA, xlerrGettingData
     pub fn from_err(xlerr: u32) -> Variant {
-
-        if xlerr == xltypeMissing || xlerr == xltypeNil {
-            return Variant::from("1"); 
-        }
         Variant(XLOPER12 {
             xltype: xltypeErr,
             val: xloper12__bindgen_ty_1 { err: xlerr as i32 },
@@ -387,9 +380,10 @@ impl<'a> From<&'a Variant> for Vec<f64> {
         let (x, y) = v.dim();
         let mut res = Vec::with_capacity(x * y);
         if x == 1 && y == 1 {
-            res.push(f64::from(v))
+            let value = f64::from(v);
+            res.push(if value.is_nan() { 1.0 } else { value });
         } else {
-            res.resize(x * y, 0.0);
+            res.resize(x * y, 1.0);
             let slice = unsafe { slice::from_raw_parts::<xloper12>(v.0.val.array.lparray, x * y) };
             for j in 0..y {
                 for i in 0..x {
@@ -1127,7 +1121,7 @@ mod tests {
     use super::*;
     #[cfg(feature = "use_ndarray")]
     use ndarray::Array2;
-    #[cfg(feature = "use_ndarray")] 
+    #[cfg(feature = "use_ndarray")]
     #[test]
     fn ndarray_conv() {
         let arr = Array2::from_shape_vec([2, 2], vec![1.0, 2.0, 3.0, 4.0]).unwrap();
