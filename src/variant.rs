@@ -380,9 +380,10 @@ impl<'a> From<&'a Variant> for Vec<f64> {
         let (x, y) = v.dim();
         let mut res = Vec::with_capacity(x * y);
         if x == 1 && y == 1 {
-            res.push(f64::from(v))
+            let value = f64::from(v);
+            res.push(if value.is_nan() { 1.0 } else { value });
         } else {
-            res.resize(x * y, 0.0);
+            res.resize(x * y, 1.0);
             let slice = unsafe { slice::from_raw_parts::<xloper12>(v.0.val.array.lparray, x * y) };
             for j in 0..y {
                 for i in 0..x {
